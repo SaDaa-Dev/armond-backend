@@ -3,9 +3,10 @@ package com.chandev.armond.domain;
 import com.chandev.armond.domain.item.Item;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Getter
+@Getter @Setter
 public class OrderItem {
 
     @Id
@@ -15,7 +16,7 @@ public class OrderItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
-    private Item orderitem;
+    private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
@@ -23,4 +24,28 @@ public class OrderItem {
 
     private int orderPrice;
     private int count;
+
+    protected OrderItem(){}
+
+    // 생성 메서드 //
+    public static OrderItem createOrderItem(Item item, int orderPrice, int count) {
+        OrderItem orderItem = new OrderItem();
+        orderItem.setItem(item);
+        orderItem.setOrderPrice(orderPrice);
+        orderItem.setCount(count);
+
+        item.removeStock(count);
+
+        return orderItem;
+    }
+
+    // 비즈니스 로직 //
+    public void cancel() {
+        getItem().addStock(count);
+    }
+
+    // 조회 로직
+    public int getTotalPrice() {
+        return getOrderPrice() * getCount();
+    }
 }
