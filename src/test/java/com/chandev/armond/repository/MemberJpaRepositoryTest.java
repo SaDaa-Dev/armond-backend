@@ -101,4 +101,13 @@ class MemberJpaRepositoryTest {
 
         //then
     }
+
+    @Test
+    void callCustom() throws Exception {
+        //given
+
+        //when
+
+        //then
+    }
 }
