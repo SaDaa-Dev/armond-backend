@@ -1,6 +1,7 @@
 package com.chandev.armond.repository;
 
 import com.chandev.armond.domain.Member;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,4 +31,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // 100% 조회만 쓸 때 좀 더 최적화 할 수 있는 방법
     @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
     Member findReadOnlyByUsername(String username);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Member> findLockByUsername(String username);
 }
