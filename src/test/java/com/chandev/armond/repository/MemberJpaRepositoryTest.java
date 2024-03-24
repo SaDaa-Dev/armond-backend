@@ -1,6 +1,9 @@
 package com.chandev.armond.repository;
 
 import com.chandev.armond.domain.Member;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -25,6 +29,9 @@ class MemberJpaRepositoryTest {
 
     @Autowired
     MemberJpaRepository memberJpaRepository;
+
+    @PersistenceContext
+    EntityManager em;
 
     @Test
     void paging() throws Exception {
@@ -49,11 +56,27 @@ class MemberJpaRepositoryTest {
 
         //when
         Slice<Member> page = memberRepository.findByAge(age, pageRequest);
-        Slice<Object> toMap = page.map(member -> new MemberDto(member.getId, member.getUsername(), null));
 
         //then
         List<Member> content = page.getContent();
         int pageNumber = page.getNumber();
     }
 
+    @Test
+    void bulkUpdate() throws Exception {
+        //given
+        memberRepository.save(new Member("member1", 10));
+        memberRepository.save(new Member("member2", 20));
+        memberRepository.save(new Member("member3", 30));
+        memberRepository.save(new Member("member4", 40));
+        memberRepository.save(new Member("member5", 50));
+
+        //when
+        int resultCount = memberJpaRepository.bulkAgePlus(20);
+        em.flush();
+        em.clear();
+
+        //then
+        assertThat(resultCount).isEqualTo(3);
+    }
 }
