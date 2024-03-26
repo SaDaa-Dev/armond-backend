@@ -1,28 +1,44 @@
 package com.chandev.armond.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of = {"id", "username", "age"})
 public class Member {
 
-    @Id @GeneratedValue
-    @Column(name = "member_id")
+    @Id
+    @GeneratedValue
     private Long id;
+    private String username;
+    private int age;
 
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team_id")
+    private Team team;
 
-    @JsonIgnore
-    @Embedded
-    private Address address;
+    public Member(String username) {
+        this.username = username;
+    }
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "member")
-    private List<Order> orders = new ArrayList<>();
+    public Member(String username, int age, Team team) {
+        this.username = username;
+        this.age = age;
+        if (team != null) {
+            changeTeam(team);
+        }
+    }
+
+    public void changeTeam(Team team) {
+        this.team = team;
+        team.getMembers().add(this);
+    }
+
 }
