@@ -1,6 +1,7 @@
 package com.chandev.armond.repository;
 
 import com.chandev.armond.domain.Member;
+import com.chandev.armond.domain.Team;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.assertj.core.api.Assertions;
@@ -32,6 +33,8 @@ class MemberJpaRepositoryTest {
 
     @PersistenceContext
     EntityManager em;
+    @Autowired
+    private TeamRepository teamRepository;
 
     @Test
     void paging() throws Exception {
@@ -78,5 +81,24 @@ class MemberJpaRepositoryTest {
 
         //then
         assertThat(resultCount).isEqualTo(3);
+    }
+
+    @Test
+    void findMemberLazy() throws Exception {
+        //given
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        memberRepository.save(new Member("member1", 10, teamA));
+        memberRepository.save(new Member("member2", 10, teamB));
+
+        em.flush();
+        em.clear();
+
+        //when
+
+        //then
     }
 }
