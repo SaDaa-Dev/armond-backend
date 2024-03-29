@@ -5,6 +5,9 @@ import com.chandev.armond.repository.MemberRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +22,11 @@ public class MemberController {
     public String findMember(@PathVariable("id") Long id) {
         Member member = memberRepository.findById(id).get();
         return member.getUsername();
+    }
+
+    @GetMapping("/members")
+    public Page<Member> list(Pageable pageable) {
+        return memberRepository.findAll(pageable);
     }
 
     @PostConstruct
