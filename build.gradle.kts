@@ -2,10 +2,14 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.2.0"
 	id("io.spring.dependency-management") version "1.1.4"
+	// querydsl 추가
+	id("com.ewerk.gradle.plugins.querydsl") version "1.0.10"
 }
 
 group = "com.chandev"
 version = "0.0.1-SNAPSHOT"
+
+val queryDslVersion = "5.0.0"
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_17
@@ -27,6 +31,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5")
 
+	// querydsl
+	implementation("com.querydsl:querydsl-jpa:${queryDslVersion}")
+	annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}")
+
 	compileOnly("org.projectlombok:lombok")
 //	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("com.h2database:h2")
@@ -36,4 +44,23 @@ dependencies {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+// querydsl
+val querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+sourceSets.getByName("main") {
+	java.srcDir(querydslDir)
+}
+configurations {
+	named("querydsl") {
+		extendsFrom(configurations.compileClasspath.get())
+	}
+}
+tasks.withType<com.ewerk.gradle.plugins.tasks.QuerydslCompile> {
+	options.annotationProcessorPath = configurations.querydsl.get()
 }
