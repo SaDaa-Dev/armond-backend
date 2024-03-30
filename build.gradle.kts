@@ -32,13 +32,14 @@ dependencies {
 	implementation("com.fasterxml.jackson.datatype:jackson-datatype-hibernate5")
 
 	// querydsl
-	implementation("com.querydsl:querydsl-jpa:${queryDslVersion}")
-	annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}")
+	implementation("com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta")
+	implementation("com.querydsl:querydsl-sql:${queryDslVersion}")
+	annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
 
 	compileOnly("org.projectlombok:lombok")
 //	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("com.h2database:h2")
-	annotationProcessor("org.p rojectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
@@ -46,7 +47,6 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
-// querydsl
 val querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
