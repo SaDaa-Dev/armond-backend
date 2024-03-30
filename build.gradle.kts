@@ -33,8 +33,9 @@ dependencies {
 
 	// querydsl
 	implementation("com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta")
-	implementation("com.querydsl:querydsl-sql:${queryDslVersion}")
 	annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
+	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 
 	compileOnly("org.projectlombok:lombok")
 //	runtimeOnly("org.postgresql:postgresql")
