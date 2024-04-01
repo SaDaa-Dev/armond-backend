@@ -33,6 +33,7 @@ dependencies {
 
 	// querydsl
 	implementation("com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta")
+	testImplementation("org.testng:testng:7.1.0")
 	annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
 	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
 	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
