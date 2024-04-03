@@ -1,6 +1,7 @@
 package com.chandev.armond;
 
 import com.chandev.armond.dto.MemberDto;
+import com.chandev.armond.dto.QMemberDto;
 import com.chandev.armond.entity.Member;
 import com.chandev.armond.entity.QMember;
 import com.chandev.armond.entity.QTeam;
@@ -256,6 +257,18 @@ public class QuerydslBasicTest {
                             member.username,
                             member.age)
                 )
+                .from(member)
+                .fetch();
+
+        for (MemberDto memberDto : result) {
+            System.out.println("memberDto = " + memberDto);
+        }
+    }
+
+    @Test
+    void findDtoByQueryProjections() throws Exception {
+        List<MemberDto> result = queryFactory
+                .select(new QMemberDto(member.username, member.age))
                 .from(member)
                 .fetch();
 
