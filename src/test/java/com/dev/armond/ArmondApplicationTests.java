@@ -1,4 +1,4 @@
-package com.chandev.armond;
+package com.dev.armond;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
