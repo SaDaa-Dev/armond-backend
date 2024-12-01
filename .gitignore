@@ -92,3 +92,6 @@ bin/
 *.rar
 *.tar
 *.zip
+
+# ER diagram
+/diagram/
