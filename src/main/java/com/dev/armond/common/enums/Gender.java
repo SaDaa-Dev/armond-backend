@@ -1,4 +1,4 @@
-package com.dev.armond.common.baseentity;
+package com.dev.armond.common.enums;
 
 import lombok.Getter;
 

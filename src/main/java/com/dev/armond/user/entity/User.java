@@ -1,7 +1,7 @@
 package com.dev.armond.user.entity;
 
 
-import com.dev.armond.common.baseentity.Gender;
+import com.dev.armond.common.enums.Gender;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

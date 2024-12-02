@@ -36,6 +36,9 @@ dependencies {
 	// PostgreSQL JDBC Driver
 	runtimeOnly 'org.postgresql:postgresql'
 
+	// Log
+	implementation 'org.slf4j:slf4j-api'
+	implementation 'ch.qos.logback:logback-classic'
 
 	// Testing
 	testImplementation 'org.testng:testng:7.1.0'
