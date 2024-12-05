@@ -1,4 +1,4 @@
-package com.dev.armond.food.entity;
+package com.dev.armond.food.domain;
 
 import com.dev.armond.common.enums.UnitType;
 import com.dev.armond.meal.entity.Meal;
@@ -46,7 +46,6 @@ public class Food {
     public Food(String name, double quantity, UnitType unitType, double fat, double carbohydrates, double protein,
                 String brandName, double cholesterol, double saturatedFat, double transFat, Meal meal) {
 
-        // 필수값 유효성 검사
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("음식 이름은 필수 값입니다.");
         }
@@ -77,8 +76,6 @@ public class Food {
     // 칼로리 계산 로직
     private int calculateCalories() {
         double weightInGrams = convertToGrams(quantity, unitType);
-        log.debug("Weight in grams: {}", weightInGrams);
-        log.debug("Fat: {}, Carbohydrates: {}, Protein: {}", fat, carbohydrates, protein);
         return (int) Math.round(weightInGrams / 100 * (fat * 9 + carbohydrates * 4 + protein * 4));
     }
 

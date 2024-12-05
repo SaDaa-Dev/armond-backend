@@ -1,7 +1,7 @@
 package com.dev.armond.food.repository;
 
 import com.dev.armond.common.enums.UnitType;
-import com.dev.armond.food.entity.Food;
+import com.dev.armond.food.domain.Food;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

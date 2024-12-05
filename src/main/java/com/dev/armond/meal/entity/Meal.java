@@ -2,7 +2,7 @@ package com.dev.armond.meal.entity;
 
 import com.dev.armond.common.baseentity.BaseEntity;
 import com.dev.armond.common.enums.MealType;
-import com.dev.armond.food.entity.Food;
+import com.dev.armond.food.domain.Food;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
