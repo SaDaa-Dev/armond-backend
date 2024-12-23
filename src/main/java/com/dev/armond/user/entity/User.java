@@ -13,8 +13,15 @@ import lombok.NoArgsConstructor;
 public class User {
     @Id @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false, unique = true)
     private String nickName;
+    @Column(nullable = false)
+    private String password;
+    @Column(nullable = false, unique = true)
     private String email;
     @Enumerated(EnumType.STRING)
     private Gender gender;

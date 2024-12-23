@@ -1,4 +1,7 @@
 spring:
+#  config:
+#    # .env 파일 읽어오기 관련
+#    import: optional:file:.env[.properties]
   profiles:
     active: local
   datasource:

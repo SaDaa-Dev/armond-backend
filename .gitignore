@@ -95,3 +95,6 @@ bin/
 
 # ER diagram
 /diagram/
+
+# 환경 관련
+.env
