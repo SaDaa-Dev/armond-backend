@@ -1,5 +1,9 @@
 spring:
-#  config:
+#  security:
+#    user:
+#      name: user
+#      password: 1234
+  #  config:
 #    # .env 파일 읽어오기 관련
 #    import: optional:file:.env[.properties]
   profiles:
@@ -23,6 +27,6 @@ spring:
       enabled: always
 logging:
   level:
-    root: debug
+#    root: debug
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace

@@ -6,6 +6,11 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -17,8 +22,10 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+
     @Column(nullable = false, unique = true)
     private String nickName;
+
     @Column(nullable = false)
     private String password;
     @Column(nullable = false, unique = true)
@@ -30,4 +37,16 @@ public class User {
     private int goalCalories;
     private int recommendCalories;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
+    public Set<GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toSet());
+    }
 }
