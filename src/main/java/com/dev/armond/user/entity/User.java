@@ -4,6 +4,7 @@ package com.dev.armond.user.entity;
 import com.dev.armond.common.enums.Gender;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -48,5 +49,19 @@ public class User {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toSet());
+    }
+
+    @Builder
+    public User(String name, String nickName, String password, String email, Gender gender,
+                Double height, Double weight, int goalCalories, Set<Role> roles) {
+        this.name = name;
+        this.nickName = nickName;
+        this.password = password;
+        this.email = email;
+        this.gender = gender;
+        this.height = height;
+        this.weight = weight;
+        this.goalCalories = goalCalories;
+        this.roles = roles;
     }
 }

@@ -30,3 +30,6 @@ logging:
 #    root: debug
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
+jwt:
+  expiration : 86400000
+  secret_key: FRbnf/Ckqv/1O8ymxg7inW4PQhIxP7xWKme9dAq426Q=
