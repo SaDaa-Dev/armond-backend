@@ -14,7 +14,7 @@ public class PaginatedResponse <T> extends ApiResponse{
         this.totalItems = data.getTotalElements();
     }
 
-    public static <T> PaginatedResponse<T> success(String message, Page<T> data) {
+    public static <T> PaginatedResponse<T> success(String message, Page<T> data) throws Exception{
         return new PaginatedResponse<>("success", message, data, null);
     }
 }

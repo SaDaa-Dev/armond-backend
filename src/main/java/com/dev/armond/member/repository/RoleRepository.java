@@ -1,6 +1,6 @@
-package com.dev.armond.user.repository;
+package com.dev.armond.member.repository;
 
-import com.dev.armond.user.entity.Role;
+import com.dev.armond.member.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

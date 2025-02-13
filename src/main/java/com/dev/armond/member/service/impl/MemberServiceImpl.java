@@ -1,27 +1,28 @@
-package com.dev.armond.user.service.impl;
+package com.dev.armond.member.service.impl;
 
-import com.dev.armond.user.dto.SignUpRequest;
-import com.dev.armond.user.entity.Role;
-import com.dev.armond.user.entity.User;
-import com.dev.armond.user.repository.RoleRepository;
-import com.dev.armond.user.repository.UserRepository;
-import com.dev.armond.user.service.UserService;
+import com.dev.armond.member.dto.SignUpRequest;
+import com.dev.armond.member.entity.Role;
+import com.dev.armond.member.entity.Member;
+import com.dev.armond.member.repository.RoleRepository;
+import com.dev.armond.member.repository.MemberRepository;
+import com.dev.armond.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Set;
 
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
+public class MemberServiceImpl implements MemberService {
+    private final MemberRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User registerUser(SignUpRequest request) {
+    public Member registerUser(SignUpRequest request) {
         if(userRepository.existsByEmail(request.email())){
             throw new RuntimeException("이미 등록된 이메일입니다.");
         }
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
         String encodedPassword = passwordEncoder.encode(request.password());
 
-        User user = User.builder()
+        Member user = Member.builder()
                 .name(request.name())
                 .nickName(request.nickName())
                 .password(encodedPassword)
@@ -48,5 +49,10 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public Optional<Member> getUser(Long id) {
+        return userRepository.findById(id);
     }
 }

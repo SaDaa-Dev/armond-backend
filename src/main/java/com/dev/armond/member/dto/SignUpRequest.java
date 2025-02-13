@@ -1,4 +1,4 @@
-package com.dev.armond.user.dto;
+package com.dev.armond.member.dto;
 
 import com.dev.armond.common.enums.Gender;
 

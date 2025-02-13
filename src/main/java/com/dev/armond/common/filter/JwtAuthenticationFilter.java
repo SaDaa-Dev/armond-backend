@@ -1,8 +1,8 @@
 package com.dev.armond.common.filter;
 
 import com.dev.armond.common.util.JwtUtil;
-import com.dev.armond.user.dto.CustomUserDetails;
-import com.dev.armond.user.service.UserDetailService;
+import com.dev.armond.member.dto.CustomMemberDetails;
+import com.dev.armond.member.service.MemberDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @NoArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
-    private UserDetailService userDetailService;
+    private MemberDetailService userDetailService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            CustomUserDetails userDetails = userDetailService.loadUserByUsername(userEmail);
+            CustomMemberDetails userDetails = userDetailService.loadUserByUsername(userEmail);
             if (jwtUtil.validateToken(token, userDetails.getEmail())) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
