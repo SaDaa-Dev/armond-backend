@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Slf4j
-public class DataInitializer {
+public class RoleInitializer {
     @Bean
     public CommandLineRunner initRoles(RoleRepository roleRepository) {
         return args -> {
