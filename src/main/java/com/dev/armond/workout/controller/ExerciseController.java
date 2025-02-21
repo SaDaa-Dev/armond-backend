@@ -1,22 +1,27 @@
-package com.dev.armond.workout.controller;
+    package com.dev.armond.workout.controller;
 
-import com.dev.armond.common.reponse.ApiResponse;
-import com.dev.armond.workout.entity.Exercise;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+    import com.dev.armond.common.reponse.ApiResponse;
+    import com.dev.armond.workout.dto.SimpleExerciseDto;
+    import com.dev.armond.workout.service.ExerciseService;
+    import lombok.RequiredArgsConstructor;
+    import lombok.extern.slf4j.Slf4j;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.annotation.GetMapping;
+    import org.springframework.web.bind.annotation.RequestMapping;
+    import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/exercise")
-@Slf4j
-public class ExerciseController {
-    @GetMapping
-    public ResponseEntity<ApiResponse<Exercise>> getExercises(@RequestParam(required = false) Long id) {
-        Exercise exercise = new Exercise();
-        log.info("운동 조회 요청: id={}", id);
-        return ResponseEntity.ok(ApiResponse.success("운동 조회 성공", exercise));
+    import java.util.List;
+
+    @RestController
+    @Slf4j
+    @RequiredArgsConstructor
+    @RequestMapping("/exercises")
+    public class ExerciseController {
+        private final ExerciseService exerciseService;
+        @GetMapping
+        public ResponseEntity<ApiResponse<List<SimpleExerciseDto>>> getExercises() {
+            List<SimpleExerciseDto> exerciseList = exerciseService.getExerciseList();
+            return ResponseEntity.ok(ApiResponse.success("getExercises", exerciseList));
+        }
+
     }
-}
