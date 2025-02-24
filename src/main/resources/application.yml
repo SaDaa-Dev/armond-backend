@@ -7,7 +7,7 @@ spring:
 #    # .env 파일 읽어오기 관련
 #    import: optional:file:.env[.properties]
   profiles:
-    active: local
+    active: dev
   datasource:
     url: jdbc:postgresql://localhost:5432/jbc
     username: jbc

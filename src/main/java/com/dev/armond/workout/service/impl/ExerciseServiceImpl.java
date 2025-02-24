@@ -16,4 +16,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     public List<SimpleExerciseDto> getExerciseList() {
         return exerciseRepository.getExercises();
     }
+
+    @Override
+    public SimpleExerciseDto saveExercise(SimpleExerciseDto exercise) {
+        return null;
+    }
 }

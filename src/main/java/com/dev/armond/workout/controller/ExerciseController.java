@@ -6,9 +6,7 @@
     import lombok.RequiredArgsConstructor;
     import lombok.extern.slf4j.Slf4j;
     import org.springframework.http.ResponseEntity;
-    import org.springframework.web.bind.annotation.GetMapping;
-    import org.springframework.web.bind.annotation.RequestMapping;
-    import org.springframework.web.bind.annotation.RestController;
+    import org.springframework.web.bind.annotation.*;
 
     import java.util.List;
 
@@ -22,6 +20,12 @@
         public ResponseEntity<ApiResponse<List<SimpleExerciseDto>>> getExercises() {
             List<SimpleExerciseDto> exerciseList = exerciseService.getExerciseList();
             return ResponseEntity.ok(ApiResponse.success("getExercises", exerciseList));
+        }
+
+        @PostMapping
+        public ResponseEntity<ApiResponse<SimpleExerciseDto>> saveExercise(@RequestBody SimpleExerciseDto exercise) {
+
+            return ResponseEntity.ok(ApiResponse.success("Save Exercise Success", exercise));
         }
 
     }

@@ -29,6 +29,8 @@ public class Member {
     private String password;
     @Column(nullable = false, unique = true)
     private String email;
+    private int loginFailCount;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
     private Double height;

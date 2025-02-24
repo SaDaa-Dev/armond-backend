@@ -1,8 +1,8 @@
 package com.dev.armond.workout.repository.custom;
 
 import com.dev.armond.workout.dto.SimpleExerciseDto;
-import com.dev.armond.workout.entity.Exercise;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,15 +22,16 @@ public class ExerciseRepositoryImpl implements ExerciseRepositoryCustom{
         return queryFactory.select(
                         Projections.constructor(
                                 SimpleExerciseDto.class,
+                                exercise.id,
                                 exercise.name,
                                 exercise.description,
-                                muscleCategory.name
-
+                                Expressions.stringTemplate("string_agg({0}, ',')", muscleCategory.name)
                         )
                 )
                 .from(exercise)
                 .join(exercise.exerciseMuscleCategories, exerciseMuscleCategory)
                 .join(exerciseMuscleCategory.muscleCategory(), muscleCategory)
+                .groupBy(exercise.id, exercise.name, exercise.description)
                 .fetch();
     }
 }

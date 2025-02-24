@@ -76,6 +76,8 @@ public class ExerciseDataInitializer {
             muscleCategoryRepository.save(quads);
             categoryMap.put("Quadriceps", quads);
 
+
+
             // 프리셋 운동 데이터를 헬퍼 객체(PresetExercise)로 정의
             List<PresetExercise> presetExercises = List.of(
                     new PresetExercise("Bench Press", "가슴과 삼두를 동시에 사용하는 복합 운동", 1, List.of("Pectoralis", "Arms")),

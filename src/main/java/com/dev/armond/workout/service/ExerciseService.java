@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ExerciseService {
     List<SimpleExerciseDto> getExerciseList();
+
+    SimpleExerciseDto saveExercise(SimpleExerciseDto exercise);
 }
