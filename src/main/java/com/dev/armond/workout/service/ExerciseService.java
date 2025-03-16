@@ -8,4 +8,6 @@ public interface ExerciseService {
     List<SimpleExerciseDto> getExerciseList();
 
     SimpleExerciseDto saveExercise(SimpleExerciseDto exercise);
+
+    void deleteExercise(Long id);
 }

@@ -21,4 +21,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     public SimpleExerciseDto saveExercise(SimpleExerciseDto exercise) {
         return null;
     }
+
+    @Override
+    public void deleteExercise(Long id) {
+        exerciseRepository.deleteById(id);
+    }
 }
