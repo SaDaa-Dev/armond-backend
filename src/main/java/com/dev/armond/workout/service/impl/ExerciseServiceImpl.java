@@ -1,6 +1,6 @@
 package com.dev.armond.workout.service.impl;
 
-import com.dev.armond.workout.dto.SimpleExerciseDto;
+import com.dev.armond.workout.dto.ExerciseListDto;
 import com.dev.armond.workout.repository.ExerciseRepository;
 import com.dev.armond.workout.service.ExerciseService;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +13,12 @@ import java.util.List;
 public class ExerciseServiceImpl implements ExerciseService {
     private final ExerciseRepository exerciseRepository;
     @Override
-    public List<SimpleExerciseDto> getExerciseList() {
+    public List<ExerciseListDto> getExerciseList() {
         return exerciseRepository.getExercises();
     }
 
     @Override
-    public SimpleExerciseDto saveExercise(SimpleExerciseDto exercise) {
+    public ExerciseListDto saveExercise(ExerciseListDto exercise) {
         return null;
     }
 

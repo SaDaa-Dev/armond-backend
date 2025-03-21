@@ -1,5 +1,6 @@
 package com.dev.armond.member.controller;
 
+import com.dev.armond.common.reponse.ApiResponse;
 import com.dev.armond.member.dto.SignUpRequest;
 import com.dev.armond.member.entity.Member;
 import com.dev.armond.member.service.MemberService;
@@ -19,10 +20,9 @@ public class MemberController {
     private final MemberService userService;
 
     @PostMapping
-    public ResponseEntity<Member> createUser(@RequestBody SignUpRequest request) {
-        Member registeredUser = userService.registerUser(request);
-        log.info("사용자 등록 완료 : {}", registeredUser.toString());
-        return ResponseEntity.ok(registeredUser);
+    public ResponseEntity<ApiResponse<String>> createUser(@RequestBody SignUpRequest request) {
+        userService.registerUser(request);
+        return ResponseEntity.ok(ApiResponse.success("사용자 등록 완료", null));
     }
 
     @GetMapping("/{id}")

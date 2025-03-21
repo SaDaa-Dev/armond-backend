@@ -1,6 +1,6 @@
 package com.dev.armond.workout.repository.custom;
 
-import com.dev.armond.workout.dto.SimpleExerciseDto;
+import com.dev.armond.workout.dto.ExerciseListDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -18,10 +18,10 @@ import static com.dev.armond.workout.entity.q.QMuscleCategory.muscleCategory;
 public class ExerciseRepositoryImpl implements ExerciseRepositoryCustom{
     private final JPAQueryFactory queryFactory;
     @Override
-    public List<SimpleExerciseDto> getExercises() {
+    public List<ExerciseListDto> getExercises() {
         return queryFactory.select(
                         Projections.constructor(
-                                SimpleExerciseDto.class,
+                                ExerciseListDto.class,
                                 exercise.id,
                                 exercise.name,
                                 exercise.description,

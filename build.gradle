@@ -42,6 +42,9 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// API 관련 (문서화)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0'
+
 	// PostgreSQL JDBC Driver
 	runtimeOnly 'org.postgresql:postgresql'
 

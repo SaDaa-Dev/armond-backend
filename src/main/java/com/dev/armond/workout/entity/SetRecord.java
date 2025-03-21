@@ -20,10 +20,13 @@ public class SetRecord {
     private ExerciseRecord exerciseRecord;
 
     @Builder
-    public SetRecord(int setNumber, double weight, int reps, ExerciseRecord exerciseRecord) {
+    public SetRecord(Integer setNumber, Double weight, Integer reps, Integer restTimeInSeconds) {
         this.setNumber = setNumber;
         this.weight = weight;
         this.reps = reps;
+    }
+
+    public void setExerciseRecord(ExerciseRecord exerciseRecord) {
         this.exerciseRecord = exerciseRecord;
     }
 }
