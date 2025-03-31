@@ -1,8 +1,11 @@
 package com.dev.armond.workout.dto.common;
 
-public record RoutineDto (
-        Long id,
+import java.util.List;
+
+public record RoutineDto(
         String name,
-        String description
-){
+        String description,
+        List<Long> exerciseIds,
+        int order
+) {
 }

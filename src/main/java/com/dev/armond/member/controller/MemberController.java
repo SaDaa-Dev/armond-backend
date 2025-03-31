@@ -31,7 +31,6 @@ public class MemberController {
         if (findUser.isEmpty()) {
             throw new RuntimeException("우우");
         }
-
         return ResponseEntity.ok(findUser.get());
     }
 }
