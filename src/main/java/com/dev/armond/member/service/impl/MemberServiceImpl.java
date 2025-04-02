@@ -1,6 +1,6 @@
 package com.dev.armond.member.service.impl;
 
-import com.dev.armond.member.dto.SignUpRequest;
+import com.dev.armond.member.dto.SignUpDto;
 import com.dev.armond.member.entity.Role;
 import com.dev.armond.member.entity.Member;
 import com.dev.armond.member.repository.RoleRepository;
@@ -17,17 +17,17 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-    private final MemberRepository userRepository;
+    private final MemberRepository memberRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Member registerUser(SignUpRequest request) {
-        if(userRepository.existsByEmail(request.email())){
+    public Member registerUser(SignUpDto request) {
+        if(memberRepository.existsByPhoneNumber(request.phoneNumber())){
             throw new RuntimeException("이미 등록된 이메일입니다.");
         }
 
-        if (userRepository.existsByNickName(request.nickName())) {
+        if (memberRepository.existsByNickName(request.nickName())) {
             throw new RuntimeException("이미 존재하는 닉네임입니다.");
         }
 
@@ -40,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
                 .name(request.name())
                 .nickName(request.nickName())
                 .password(encodedPassword)
-                .email(request.email())
+                .phoneNumber(request.phoneNumber())
                 .gender(request.gender())
                 .height(request.height())
                 .weight(request.weight())
@@ -48,11 +48,11 @@ public class MemberServiceImpl implements MemberService {
                 .roles(Set.of(defaultRole))
                 .build();
 
-        return userRepository.save(user);
+        return memberRepository.save(user);
     }
 
     @Override
     public Optional<Member> getUser(Long id) {
-        return userRepository.findById(id);
+        return memberRepository.findById(id);
     }
 }

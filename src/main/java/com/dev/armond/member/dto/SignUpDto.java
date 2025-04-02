@@ -2,10 +2,10 @@ package com.dev.armond.member.dto;
 
 import com.dev.armond.common.enums.Gender;
 
-public record SignUpRequest(
+public record SignUpDto(
         String name,
         String nickName,
-        String email,
+        String phoneNumber,
         String password,
         Gender gender,
         Double height,

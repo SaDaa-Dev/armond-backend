@@ -8,17 +8,18 @@ import java.util.Collection;
 
 @Getter
 public class CustomMemberDetails implements UserDetails {
-    private String email;
+    private final Long memberId;
+    private final String phoneNumber;
     private String password;
-    private boolean enabled;
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomMemberDetails(String email, String password, boolean enabled, Collection<? extends GrantedAuthority> authorities) {
-        this.email = email;
+    public CustomMemberDetails(Long memberId, String phoneNumber, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.memberId = memberId;
+        this.phoneNumber = phoneNumber;
         this.password = password;
-        this.enabled = enabled;
         this.authorities = authorities;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
@@ -26,7 +27,12 @@ public class CustomMemberDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return phoneNumber;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override
@@ -41,6 +47,11 @@ public class CustomMemberDetails implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
         return true;
     }
 }

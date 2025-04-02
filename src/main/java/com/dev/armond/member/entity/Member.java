@@ -25,10 +25,11 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String nickName;
 
+    @Column(nullable = false, unique = true)
+    private String phoneNumber;
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false, unique = true)
-    private String email;
+
     private int loginFailCount;
 
     @Enumerated(EnumType.STRING)
@@ -52,16 +53,24 @@ public class Member {
     }
 
     @Builder
-    public Member(String name, String nickName, String password, String email, Gender gender,
+    public Member(String name, String nickName, String password, String phoneNumber, Gender gender,
                   Double height, Double weight, int goalCalories, Set<Role> roles) {
         this.name = name;
         this.nickName = nickName;
         this.password = password;
-        this.email = email;
+        this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.height = height;
         this.weight = weight;
         this.goalCalories = goalCalories;
         this.roles = roles;
+    }
+
+    public void increaseLoginFailCount() {
+        this.loginFailCount++;
+    }
+
+    public void resetLoginFailCount() {
+        this.loginFailCount = 0;
     }
 }
