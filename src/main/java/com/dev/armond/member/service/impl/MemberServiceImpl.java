@@ -22,7 +22,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Member registerUser(SignUpDto request) {
+    public Member signupMember(SignUpDto request) {
         if(memberRepository.existsByPhoneNumber(request.phoneNumber())){
             throw new RuntimeException("이미 등록된 이메일입니다.");
         }
@@ -36,7 +36,7 @@ public class MemberServiceImpl implements MemberService {
 
         String encodedPassword = passwordEncoder.encode(request.password());
 
-        Member user = Member.builder()
+        Member member = Member.builder()
                 .name(request.name())
                 .nickName(request.nickName())
                 .password(encodedPassword)
@@ -48,7 +48,7 @@ public class MemberServiceImpl implements MemberService {
                 .roles(Set.of(defaultRole))
                 .build();
 
-        return memberRepository.save(user);
+        return memberRepository.save(member);
     }
 
     @Override

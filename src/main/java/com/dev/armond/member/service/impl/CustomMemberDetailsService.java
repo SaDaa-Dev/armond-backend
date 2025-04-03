@@ -16,9 +16,9 @@ public class CustomMemberDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-        Member user = userRepository.findMemberByPhoneNumber(phoneNumber)
+        Member member = userRepository.findMemberByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
-        return new CustomMemberDetails(user.getId(), user.getPhoneNumber(), user.getPassword(), user.getAuthorities());
+        return new CustomMemberDetails(member.getId(), member.getPhoneNumber(), member.getPassword(), member.getAuthorities());
     }
 }

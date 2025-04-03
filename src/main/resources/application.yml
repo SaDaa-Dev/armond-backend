@@ -16,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         show_sql: true
@@ -31,7 +31,8 @@ logging:
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
 jwt:
-  expiration : 86400000
+  accessExpiration : 900000 # 15분
+  refreshExpiration : 2592000000 # 30일
   secret_key: FRbnf/Ckqv/1O8ymxg7inW4PQhIxP7xWKme9dAq426Q=
 springdoc:
   swagger-ui:

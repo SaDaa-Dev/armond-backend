@@ -73,4 +73,5 @@ public class Member {
     public void resetLoginFailCount() {
         this.loginFailCount = 0;
     }
+
 }

@@ -6,6 +6,6 @@ import com.dev.armond.member.entity.Member;
 import java.util.Optional;
 
 public interface MemberService {
-    Member registerUser(SignUpDto signUpDto);
+    Member signupMember(SignUpDto signUpDto);
     Optional<Member> getUser(Long id);
 }

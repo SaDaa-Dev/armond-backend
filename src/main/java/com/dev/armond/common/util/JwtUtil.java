@@ -20,42 +20,44 @@ import java.util.Date;
 public class JwtUtil {
     private final CustomMemberDetailsService memberDetailsService;
     private final Key secretKey;
-    private final long EXPIRATION_TIME; // 24시간
+    private final long ACCESS_EXPIRATION_TIME;
+    private final long REFRESH_EXPIRATION_TIME;
 
     public JwtUtil(@Value("${jwt.secret_key}") String secretKey,
-                   @Value("${jwt.expiration}") long expirationTime,
+                   @Value("${jwt.accessExpiration}") long expirationTime,
+                   @Value("${jwt.refreshExpiration}") long refreshExpirationTime,
                    CustomMemberDetailsService memberDetailsService
     ) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-        this.EXPIRATION_TIME = expirationTime;
+        this.ACCESS_EXPIRATION_TIME = expirationTime;
+        this.REFRESH_EXPIRATION_TIME = refreshExpirationTime;
         this.memberDetailsService = memberDetailsService;
     }
 
 
-    public String generateToken(Authentication authentication) {
-        String phoneNumber = authentication.getName();
+    public String generateAccessToken(String phoneNumber) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + ACCESS_EXPIRATION_TIME);
 
         return Jwts.builder()
                 .subject(phoneNumber)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .expiration(expiry)
                 .signWith(secretKey)
                 .compact();
     }
 
-    public Authentication getAuthentication(String token) {
-        String phoneNumber = getPhoneNumber(token);
-        UserDetails memberDetails = memberDetailsService.loadUserByUsername(phoneNumber);
-        return new UsernamePasswordAuthenticationToken(memberDetails, "", memberDetails.getAuthorities());
-    }
+    public String generateRefreshToken(String phoneNumber) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + REFRESH_EXPIRATION_TIME);
 
-    public String getPhoneNumber(String token) {
-        return Jwts.parser()
-                .verifyWith((SecretKey) secretKey)
-                .build()
-                .parseSignedClaims(token).getPayload()
-                .getSubject();
+        return Jwts.builder()
+                .subject(phoneNumber)
+                .issuedAt(now)
+                .expiration(expiry)
+                .signWith(secretKey)
+                .compact();
     }
 
     public boolean validateToken(String token) {
@@ -69,6 +71,26 @@ public class JwtUtil {
             return false;
         }
     }
+
+    public Authentication getAuthentication(String token) {
+        String phoneNumber = getPhoneNumber(token);
+        UserDetails memberDetails = memberDetailsService.loadUserByUsername(phoneNumber);
+        return new UsernamePasswordAuthenticationToken(
+                memberDetails,
+                null,
+                memberDetails.getAuthorities()
+        );
+    }
+
+    public String getPhoneNumber(String token) {
+        return Jwts.parser()
+                .verifyWith((SecretKey) secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
 
     private boolean isTokenExpired(String token) {
         Claims claims = Jwts.parser()
