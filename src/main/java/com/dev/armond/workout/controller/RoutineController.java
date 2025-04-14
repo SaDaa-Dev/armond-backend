@@ -39,11 +39,8 @@ public class RoutineController {
 
     // 루틴 전체 조회
     @GetMapping
-    public ResponseEntity<ApiResponse<List<RoutineDto>>> getRoutines(@AuthenticationPrincipal CustomMemberDetails user) {
-        String username = user.getUsername();
-        log.info("===================여기보셈====================");
-        log.info(username);
-        routineService.getRoutines();
+    public ResponseEntity<ApiResponse<List<RoutineDto>>> getRoutines(@AuthenticationPrincipal CustomMemberDetails member) {
+        routineService.getRoutines(member.getMemberId());
         return ResponseEntity.ok(ApiResponse.success("Routine 목록 조회", null));
     }
 
@@ -54,6 +51,7 @@ public class RoutineController {
         return ResponseEntity.ok(ApiResponse.success("Routine updated successfully", updatedRoutine));
     }
 
+    // 루틴 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteRoutine(@PathVariable Long id) {
         routineService.deleteRoutine(id);

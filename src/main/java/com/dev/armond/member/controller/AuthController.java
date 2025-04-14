@@ -3,10 +3,12 @@ package com.dev.armond.member.controller;
 import com.dev.armond.common.reponse.ApiResponse;
 import com.dev.armond.member.dto.*;
 import com.dev.armond.member.entity.Member;
+import com.dev.armond.member.repository.MemberRepository;
 import com.dev.armond.member.service.MemberService;
 import com.dev.armond.member.service.impl.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<TokenResponse>> signup(@RequestBody SignUpDto request) {
@@ -46,8 +50,7 @@ public class AuthController {
     @Operation(summary = "로그아웃", description = "서버에서 RefreshToken을 삭제")
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout(@AuthenticationPrincipal CustomMemberDetails memberDetails) {
-        String phoneNumber = memberDetails.getUsername();
-        authService.logout(phoneNumber);
-        return ResponseEntity.ok(ApiResponse.success("로그아웃", phoneNumber));
+        authService.logout(memberDetails.getMemberId());
+        return ResponseEntity.ok(ApiResponse.success("로그아웃", memberDetails.getPhoneNumber()));
     }
 }

@@ -6,6 +6,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtUtil {
     private final CustomMemberDetailsService memberDetailsService;
     private final Key secretKey;
@@ -36,31 +38,33 @@ public class JwtUtil {
     }
 
 
-    public String generateAccessToken(String phoneNumber) {
+    public String generateAccessToken(Long memberId) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + ACCESS_EXPIRATION_TIME);
+        String memberIdWithPrefix = AuthUtil.memberIdWithPrefix(memberId);
+        log.info("memberIdWithPrefix = {}", memberIdWithPrefix);
 
         return Jwts.builder()
-                .subject(phoneNumber)
+                .subject(memberIdWithPrefix)
                 .issuedAt(new Date())
                 .expiration(expiry)
                 .signWith(secretKey)
                 .compact();
     }
 
-    public String generateRefreshToken(String phoneNumber) {
+    public String generateRefreshToken(Long memberId) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + REFRESH_EXPIRATION_TIME);
 
         return Jwts.builder()
-                .subject(phoneNumber)
+                .subject(AuthUtil.memberIdWithPrefix(memberId))
                 .issuedAt(now)
                 .expiration(expiry)
                 .signWith(secretKey)
                 .compact();
     }
 
-    public boolean validateToken(String token) {
+    public boolean isValidateToken(String token) {
         try {
             Jwts.parser()
                     .verifyWith((SecretKey) secretKey)
@@ -73,8 +77,8 @@ public class JwtUtil {
     }
 
     public Authentication getAuthentication(String token) {
-        String phoneNumber = getPhoneNumber(token);
-        UserDetails memberDetails = memberDetailsService.loadUserByUsername(phoneNumber);
+        Long memberId = getMemberId(token);
+        UserDetails memberDetails = memberDetailsService.loadUserById(memberId);
         return new UsernamePasswordAuthenticationToken(
                 memberDetails,
                 null,
@@ -82,13 +86,19 @@ public class JwtUtil {
         );
     }
 
-    public String getPhoneNumber(String token) {
-        return Jwts.parser()
+    public Long getMemberId(String token) {
+        String sub = Jwts.parser()
                 .verifyWith((SecretKey) secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+
+        if (!sub.startsWith("UID:")) {
+            throw new IllegalStateException("Invalid subject prefix");
+        }
+
+        return Long.parseLong(sub.substring(4));
     }
 
 

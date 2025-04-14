@@ -24,13 +24,13 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     public TokenResponse createTokenForMember(Member member) {
-        String phoneNumber = member.getPhoneNumber();
-        String accessToken = jwtUtil.generateAccessToken(phoneNumber);
-        String refreshToken = jwtUtil.generateRefreshToken(phoneNumber);
+        Long memberId = member.getId();
+        String accessToken = jwtUtil.generateAccessToken(memberId);
+        String refreshToken = jwtUtil.generateRefreshToken(memberId);
 
         refreshTokenRepository.save(
                 RefreshToken.builder()
-                        .phoneNumber(phoneNumber)
+                        .memberId(memberId)
                         .token(refreshToken)
                         .build()
         );
@@ -46,18 +46,19 @@ public class AuthService {
 
             CustomMemberDetails memberDetails = (CustomMemberDetails) auth.getPrincipal();
             String pn = memberDetails.getPhoneNumber();
+            Long memberId = memberDetails.getMemberId();
 
             memberRepository.findMemberByPhoneNumber(pn).ifPresent(member -> {
                 member.resetLoginFailCount();
                 memberRepository.save(member);
             });
 
-            String accessToken = jwtUtil.generateRefreshToken(pn);
-            String refreshToken = jwtUtil.generateRefreshToken(pn);
+            String accessToken = jwtUtil.generateAccessToken(memberId);
+            String refreshToken = jwtUtil.generateRefreshToken(memberId);
 
             refreshTokenRepository.save(
                     RefreshToken.builder()
-                            .phoneNumber(pn)
+                            .memberId(memberId)
                             .token(refreshToken)
                             .build()
             );
@@ -76,21 +77,21 @@ public class AuthService {
     }
 
     public TokenResponse reissue(String refreshToken) {
-        if (jwtUtil.validateToken(refreshToken)) {
+        if (!jwtUtil.isValidateToken(refreshToken)) {
             throw new RuntimeException("Invalid Refresh Token");
         }
 
-        String phoneNumber = jwtUtil.getPhoneNumber(refreshToken);
+        Long memberId = jwtUtil.getMemberId(refreshToken);
 
-        RefreshToken savedToken = refreshTokenRepository.findByPhoneNumber(phoneNumber)
+        RefreshToken savedToken = refreshTokenRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Refresh Token Not Found"));
 
         if (!savedToken.getToken().equals(refreshToken)) {
             throw new RuntimeException("Token Mismatch");
         }
 
-        String newAccessToken = jwtUtil.generateAccessToken(phoneNumber);
-        String newRefreshToken = jwtUtil.generateRefreshToken(phoneNumber);
+        String newAccessToken = jwtUtil.generateAccessToken(memberId);
+        String newRefreshToken = jwtUtil.generateRefreshToken(memberId);
 
         savedToken.updateToken(newRefreshToken);
         refreshTokenRepository.save(savedToken);
@@ -100,8 +101,8 @@ public class AuthService {
 
 
     @Transactional
-    public void logout(String phoneNumber) {
-        refreshTokenRepository.deleteByPhoneNumber(phoneNumber);
+    public void logout(Long memberId) {
+        refreshTokenRepository.deleteById(memberId);
     }
 
 }

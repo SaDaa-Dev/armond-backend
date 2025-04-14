@@ -16,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update # update, create-drop
     properties:
       hibernate:
         show_sql: true
@@ -39,3 +39,12 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /api-docs
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  endpoint:
+    health:
+      show-details: always
+

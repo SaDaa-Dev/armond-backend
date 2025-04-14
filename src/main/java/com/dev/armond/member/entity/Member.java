@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "name", "nickName", "email"})
+@ToString(of = {"id", "name", "nickName", "phoneNumber"})
 public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

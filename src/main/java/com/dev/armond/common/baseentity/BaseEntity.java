@@ -10,9 +10,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity extends BaseTimeEntity{
     @CreatedBy
-    private String createBy;
+    private Long createBy;
 
     @LastModifiedBy
-    private String modifiedBy;
+    private Long modifiedBy;
 
 }

@@ -12,7 +12,7 @@ import lombok.*;
 @Builder
 public class RefreshToken {
     @Id
-    private String phoneNumber;
+    private Long memberId;
 
     @Column(nullable = false)
     private String token;

@@ -70,15 +70,14 @@ public class RoutineServiceImpl implements RoutineService {
     }
 
     @Override
-    public List<RoutineDto> getRoutines() {
+    public List<RoutineDto> getRoutines(Long memberId) {
         queryFactory.select(
                         routine
                 )
                 .from(routine)
                 .where(
-                        routine.createBy.eq("MyName") // 내가 등록한 루틴
+                        routine.createBy.eq(memberId) // 내가 등록한 루틴
                                 .or(routine.isCommon.eq(true))
-
                 )
                 .fetch();
         return null;
