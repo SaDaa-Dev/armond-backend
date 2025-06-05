@@ -14,4 +14,7 @@ public class TokenDto {
     private String accessToken;
     private String refreshToken;
     private Long accessTokenExpiresIn;
+
+    // 사용자 정보
+    private MemberInfo memberInfo;
 }

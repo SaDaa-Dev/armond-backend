@@ -2,7 +2,9 @@ package com.dev.armond.member.service.impl;
 
 import com.dev.armond.common.util.JwtTokenProvider;
 import com.dev.armond.member.dto.LoginRequestDto;
+import com.dev.armond.member.dto.MemberInfo;
 import com.dev.armond.member.dto.TokenDto;
+import com.dev.armond.member.entity.Member;
 import com.dev.armond.member.entity.RefreshToken;
 import com.dev.armond.member.repository.MemberRepository;
 import com.dev.armond.member.repository.RefreshTokenRepository;
@@ -19,12 +21,11 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
     @Value("${jwt.refreshExpiration}")
     private long refreshTokenExpiration;
-
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final MemberRepository memberRepository;
 
     public TokenDto login(LoginRequestDto loginRequestDto) {
         UsernamePasswordAuthenticationToken authenticationToken
@@ -43,14 +44,16 @@ public class AuthService {
 
         refreshTokenRepository.save(refreshTokenEntity);
 
+        Member member = memberRepository.findMemberByPhoneNumber(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
         return TokenDto.builder()
                 .grantType("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .accessTokenExpiresIn(jwtTokenProvider.getAccessTokenValidityIn())
+                .memberInfo(MemberInfo.from(member))
                 .build();
-
-
     }
 
     public TokenDto reissue(String accessToken, String refreshToken) {
@@ -74,14 +77,17 @@ public class AuthService {
         storedRefreshToken.updateToken(newRefreshToken, refreshTokenExpiration);
         refreshTokenRepository.save(storedRefreshToken);
 
+        Member member = memberRepository.findMemberByPhoneNumber(memberName)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
         return TokenDto.builder()
                 .grantType("Bearer")
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .accessTokenExpiresIn(jwtTokenProvider.getAccessTokenValidityIn())
+                .memberInfo(MemberInfo.from(member))
                 .build();
     }
-
 
     @Transactional
     public void logout(String accessToken) {
