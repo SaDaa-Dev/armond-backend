@@ -18,16 +18,24 @@ public class CustomMemberDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phoneNumber) throws UsernameNotFoundException {
-        Member member = memberRepository.findMemberByPhoneNumber(phoneNumber)
-                    .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다. (By phoneNumber)"));
+        log.info("Attempting to load user by phone number: {}", phoneNumber);
+        Member findMember = memberRepository.findMemberByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> {
+                    log.warn("User not found with phone number: {}", phoneNumber);
+                    return new UsernameNotFoundException("사용자를 찾을 수 없습니다. (전화번호: " + phoneNumber + ")");
+                });
 
-        return toDetails(member);
+        return toDetails(findMember);
     }
 
     public UserDetails loadUserById(Long id) {
-        Member m = memberRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다. (By MemberId)"));
-        return toDetails(m);
+        log.info("Attempting to load user by member ID: {}", id);
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("User not found with member ID: {}", id);
+                    return new UsernameNotFoundException("사용자를 찾을 수 없습니다. (회원 ID: " + id + ")");
+                });
+        return toDetails(member);
     }
 
     private CustomMemberDetails toDetails(Member m) {

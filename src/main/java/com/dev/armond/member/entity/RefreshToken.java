@@ -1,23 +1,32 @@
 package com.dev.armond.member.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+@RedisHash("refreshToken")
 public class RefreshToken {
     @Id
-    private Long memberId;
+    private String id;
 
-    @Column(nullable = false)
-    private String token;
+    private String refreshToken;
 
-    public void updateToken(String token) {
-        this.token = token;
+    @TimeToLive
+    private Long expiration;
+
+    @Builder
+    public RefreshToken(String id, String refreshToken, Long expiration) {
+        this.id = id;
+        this.refreshToken = refreshToken;
+        this.expiration = expiration;
+    }
+
+    public RefreshToken updateToken(String refreshToken, Long expiration) {
+        this.refreshToken = refreshToken;
+        this.expiration = expiration;
+        return this;
     }
 }

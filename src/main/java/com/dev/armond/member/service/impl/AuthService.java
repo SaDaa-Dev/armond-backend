@@ -1,108 +1,95 @@
 package com.dev.armond.member.service.impl;
 
-import com.dev.armond.common.util.JwtUtil;
-import com.dev.armond.member.dto.CustomMemberDetails;
-import com.dev.armond.member.dto.TokenResponse;
-import com.dev.armond.member.entity.Member;
+import com.dev.armond.common.util.JwtTokenProvider;
+import com.dev.armond.member.dto.LoginRequestDto;
+import com.dev.armond.member.dto.TokenDto;
 import com.dev.armond.member.entity.RefreshToken;
 import com.dev.armond.member.repository.MemberRepository;
 import com.dev.armond.member.repository.RefreshTokenRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-    private final MemberRepository memberRepository;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${jwt.refreshExpiration}")
+    private long refreshTokenExpiration;
+
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
-    public TokenResponse createTokenForMember(Member member) {
-        Long memberId = member.getId();
-        String accessToken = jwtUtil.generateAccessToken(memberId);
-        String refreshToken = jwtUtil.generateRefreshToken(memberId);
+    public TokenDto login(LoginRequestDto loginRequestDto) {
+        UsernamePasswordAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(loginRequestDto.getMemberName(), loginRequestDto.getPassword());
 
-        refreshTokenRepository.save(
-                RefreshToken.builder()
-                        .memberId(memberId)
-                        .token(refreshToken)
-                        .build()
-        );
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        return new TokenResponse(accessToken, refreshToken);
-    }
+        String accessToken = jwtTokenProvider.createAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.createRefreshToken();
 
-    public TokenResponse login(String phoneNumber, String password) {
-        try {
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(phoneNumber, password)
-            );
+        RefreshToken refreshTokenEntity = RefreshToken.builder()
+                .id(authentication.getName())
+                .refreshToken(refreshToken)
+                .expiration(refreshTokenExpiration / 1000)
+                .build();
 
-            CustomMemberDetails memberDetails = (CustomMemberDetails) auth.getPrincipal();
-            String pn = memberDetails.getPhoneNumber();
-            Long memberId = memberDetails.getMemberId();
+        refreshTokenRepository.save(refreshTokenEntity);
 
-            memberRepository.findMemberByPhoneNumber(pn).ifPresent(member -> {
-                member.resetLoginFailCount();
-                memberRepository.save(member);
-            });
+        return TokenDto.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .accessTokenExpiresIn(jwtTokenProvider.getAccessTokenValidityIn())
+                .build();
 
-            String accessToken = jwtUtil.generateAccessToken(memberId);
-            String refreshToken = jwtUtil.generateRefreshToken(memberId);
-
-            refreshTokenRepository.save(
-                    RefreshToken.builder()
-                            .memberId(memberId)
-                            .token(refreshToken)
-                            .build()
-            );
-
-            return new TokenResponse(accessToken, refreshToken);
-        } catch (AuthenticationException e) {
-            memberRepository.findMemberByPhoneNumber(phoneNumber)
-                    .ifPresent(member -> {
-                        member.increaseLoginFailCount();
-                        memberRepository.save(member);
-                    });
-
-            throw e;
-        }
 
     }
 
-    public TokenResponse reissue(String refreshToken) {
-        if (!jwtUtil.isValidateToken(refreshToken)) {
-            throw new RuntimeException("Invalid Refresh Token");
+    public TokenDto reissue(String accessToken, String refreshToken) {
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
         }
 
-        Long memberId = jwtUtil.getMemberId(refreshToken);
+        String memberName = jwtTokenProvider.getMemberNameFromToken(accessToken);
 
-        RefreshToken savedToken = refreshTokenRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Refresh Token Not Found"));
+        RefreshToken storedRefreshToken = refreshTokenRepository.findById(memberName)
+                .orElseThrow(() -> new RuntimeException("로그아웃되었거나 만료된 사용자입니다."));
 
-        if (!savedToken.getToken().equals(refreshToken)) {
-            throw new RuntimeException("Token Mismatch");
+        if (!storedRefreshToken.getRefreshToken().equals(refreshToken)) {
+            throw new RuntimeException("Refresh Token이 일치하지 않습니다. 보안 위험이 있을 수 있습니다.");
         }
 
-        String newAccessToken = jwtUtil.generateAccessToken(memberId);
-        String newRefreshToken = jwtUtil.generateRefreshToken(memberId);
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+        String newAccessToken = jwtTokenProvider.createAccessToken(authentication);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken();
 
-        savedToken.updateToken(newRefreshToken);
-        refreshTokenRepository.save(savedToken);
+        storedRefreshToken.updateToken(newRefreshToken, refreshTokenExpiration);
+        refreshTokenRepository.save(storedRefreshToken);
 
-        return new TokenResponse(newAccessToken, newRefreshToken);
+        return TokenDto.builder()
+                .grantType("Bearer")
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .accessTokenExpiresIn(jwtTokenProvider.getAccessTokenValidityIn())
+                .build();
     }
 
 
     @Transactional
-    public void logout(Long memberId) {
-        refreshTokenRepository.deleteById(memberId);
+    public void logout(String accessToken) {
+        String memberName = jwtTokenProvider.getMemberNameFromToken(accessToken);
+
+        if (refreshTokenRepository.existsById(memberName)) {
+            refreshTokenRepository.deleteById(memberName);
+        }
     }
 
 }

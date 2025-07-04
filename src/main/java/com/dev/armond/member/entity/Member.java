@@ -21,7 +21,6 @@ public class Member {
     @Column(nullable = false)
     private String name;
 
-
     @Column(nullable = false, unique = true)
     private String nickName;
 
@@ -29,6 +28,8 @@ public class Member {
     private String phoneNumber;
     @Column(nullable = false)
     private String password;
+
+    private String email;
 
     private int loginFailCount;
 

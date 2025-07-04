@@ -1,10 +1,7 @@
 package com.dev.armond.member.repository;
 
 import com.dev.armond.member.entity.RefreshToken;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.CrudRepository;
 
-@Repository
-public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-
+public interface RefreshTokenRepository extends CrudRepository<RefreshToken, String> {
 }

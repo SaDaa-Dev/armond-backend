@@ -1,7 +1,7 @@
 package com.dev.armond.common.config;
 
 import com.dev.armond.common.filter.JwtAuthenticationFilter;
-import com.dev.armond.common.util.JwtUtil;
+import com.dev.armond.common.util.JwtTokenProvider;
 import com.dev.armond.member.service.impl.CustomMemberDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final CustomMemberDetailsService memberDetailsService;
     private final PasswordEncoderConfig passwordEncoderConfig;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final static String[] WHITELIST = {
             "/**"
@@ -36,7 +36,7 @@ public class SecurityConfig {
                             .anyRequest()
                             .authenticated();
                 })
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -50,10 +50,5 @@ public class SecurityConfig {
                 .passwordEncoder(passwordEncoderConfig.passwordEncoder());
 
         return builder.build();
-    }
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtUtil);
     }
 }

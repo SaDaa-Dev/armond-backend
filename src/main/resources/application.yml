@@ -13,10 +13,9 @@ spring:
     username: jbc
     password:
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
-      ddl-auto: update # update, create-drop
+      ddl-auto: create-drop # update, create-drop
     properties:
       hibernate:
         show_sql: true
@@ -25,15 +24,20 @@ spring:
   output:
     ansi:
       enabled: always
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 1000ms
 logging:
   level:
 #    root: debug
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
 jwt:
-  accessExpiration : 900000 # 15분
+  accessExpiration : 3600000 # (1시간)
   refreshExpiration : 2592000000 # 30일
-  secret_key: FRbnf/Ckqv/1O8ymxg7inW4PQhIxP7xWKme9dAq426Q=
+  secret: FRbnf/Ckqv/1O8ymxg7inW4PQhIxP7xWKme9dAq426Q=
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -45,6 +49,4 @@ management:
       exposure:
         include: health, info
   endpoint:
-    health:
-      show-details: always
-
+    health show-details: always

@@ -1,6 +1,6 @@
 package com.dev.armond.member.service.impl;
 
-import com.dev.armond.member.dto.SignUpDto;
+import com.dev.armond.member.dto.RegisterRequestDto;
 import com.dev.armond.member.entity.Role;
 import com.dev.armond.member.entity.Member;
 import com.dev.armond.member.repository.RoleRepository;
@@ -22,9 +22,9 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Member signupMember(SignUpDto request) {
-        if(memberRepository.existsByPhoneNumber(request.phoneNumber())){
-            throw new RuntimeException("이미 등록된 이메일입니다.");
+    public Member registerMember(RegisterRequestDto request) {
+        if(memberRepository.existsByEmail(request.name())){
+            throw new RuntimeException("이미 등록된 유저입니다.");
         }
 
         if (memberRepository.existsByNickName(request.nickName())) {
