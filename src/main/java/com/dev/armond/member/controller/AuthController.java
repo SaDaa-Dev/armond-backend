@@ -31,8 +31,7 @@ public class AuthController {
 
     @Operation(summary = "로그인", description = "전화번호/비밀번호로 로그인")
     @PostMapping("/login")
-
-    public ResponseEntity<ApiResponse<TokenDto>> login(@RequestBody LoginRequestDto loginRequestDto) {
+    public ResponseEntity<ApiResponse<TokenDto>> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
         TokenDto tokenDto = authService.login(loginRequestDto);
         return ResponseEntity.ok(ApiResponse.success("로그인 완료", tokenDto));
     }

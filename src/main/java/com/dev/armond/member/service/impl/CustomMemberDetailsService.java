@@ -1,5 +1,6 @@
 package com.dev.armond.member.service.impl;
 
+import com.dev.armond.common.exception.UserNotFoundException;
 import com.dev.armond.member.dto.CustomMemberDetails;
 import com.dev.armond.member.entity.Member;
 import com.dev.armond.member.repository.MemberRepository;
@@ -33,7 +34,7 @@ public class CustomMemberDetailsService implements UserDetailsService {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("User not found with member ID: {}", id);
-                    return new UsernameNotFoundException("사용자를 찾을 수 없습니다. (회원 ID: " + id + ")");
+                    return new UserNotFoundException("사용자를 찾을 수 없습니다. (회원 ID: " + id + ")");
                 });
         return toDetails(member);
     }

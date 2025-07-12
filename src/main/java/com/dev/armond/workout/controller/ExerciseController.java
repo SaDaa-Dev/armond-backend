@@ -1,6 +1,7 @@
 package com.dev.armond.workout.controller;
 
 import com.dev.armond.common.reponse.ApiResponse;
+import com.dev.armond.member.dto.CustomMemberDetails;
 import com.dev.armond.workout.dto.ExerciseListDto;
 import com.dev.armond.workout.service.ExerciseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +23,7 @@ public class ExerciseController {
     private final ExerciseService exerciseService;
     @Operation(summary = "운동 목록 조회", description = "전체 운동 목록을 조회")
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ExerciseListDto>>> getExercises() {
+    public ResponseEntity<ApiResponse<List<ExerciseListDto>>> getExercises(@AuthenticationPrincipal CustomMemberDetails member) {
         List<ExerciseListDto> exerciseList = exerciseService.getExerciseList();
         return ResponseEntity.ok(ApiResponse.success("getExercises", exerciseList));
     }

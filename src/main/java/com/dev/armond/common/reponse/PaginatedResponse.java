@@ -8,7 +8,7 @@ public class PaginatedResponse <T> extends ApiResponse{
     private long totalItems;
 
     public PaginatedResponse(String status, String message, Page<T> data, String error) {
-        super(status, message, data, error);
+        super(status, message, data, error, null);
         this.currentPage = data.getNumber();
         this.totalPage =  data.getTotalPages();
         this.totalItems = data.getTotalElements();
