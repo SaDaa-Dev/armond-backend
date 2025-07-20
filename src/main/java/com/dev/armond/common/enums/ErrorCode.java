@@ -21,7 +21,7 @@ public enum ErrorCode {
     
     // ========== 인증 관련 에러 (AUTH) ==========
     AUTH_USER_NOT_FOUND("AUTH_001", "사용자를 찾을 수 없습니다", 401),
-    AUTH_INVALID_CREDENTIALS("AUTH_002", "아이디 또는 비밀번호가 올바르지 않습니다", 401),
+    AUTH_INVALID_CREDENTIALS("AUTH_002", "비밀번호가 올바르지 않습니다", 401),
     AUTH_TOKEN_GENERATION_FAILED("AUTH_003", "토큰 생성에 실패했습니다", 500),
     AUTH_TOKEN_INVALID("AUTH_004", "유효하지 않은 토큰입니다", 401),
     AUTH_TOKEN_EXPIRED("AUTH_005", "만료된 토큰입니다", 401),

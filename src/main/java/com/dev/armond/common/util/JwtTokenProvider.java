@@ -1,5 +1,7 @@
 package com.dev.armond.common.util;
 
+import com.dev.armond.common.exception.TokenExpiredException;
+import com.dev.armond.common.exception.TokenInvalidException;
 import com.dev.armond.member.service.impl.CustomMemberDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -83,23 +85,40 @@ public class JwtTokenProvider {
         );
     }
 
+    /**
+     * 토큰 유효성 검증 (예외 없는 버전 - 기존 호환성 유지)
+     */
     public boolean validateToken(String token) {
+        try {
+            validateTokenWithException(token);
+            return true;
+        } catch (TokenExpiredException | TokenInvalidException e) {
+            return false;
+        }
+    }
+
+    /**
+     * 토큰 유효성 검증 (구체적인 예외 발생)
+     */
+    public void validateTokenWithException(String token) {
         try {
             Jwts.parser()
                     .verifyWith(key)
                     .build()
                     .parseSignedClaims(token);
-            return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            logger.info("잘못된 JWT 서명입니다.", e);
         } catch (ExpiredJwtException e) {
-            logger.info("만료된 JWT 토큰입니다.", e);
+            logger.warn("만료된 JWT 토큰입니다.", e);
+            throw new TokenExpiredException("토큰이 만료되었습니다.");
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            logger.warn("잘못된 JWT 서명입니다.", e);
+            throw new TokenInvalidException("유효하지 않은 토큰입니다.");
         } catch (UnsupportedJwtException e) {
-            logger.info("지원되지 않는 JWT 토큰입니다.", e);
+            logger.warn("지원되지 않는 JWT 토큰입니다.", e);
+            throw new TokenInvalidException("지원되지 않는 토큰입니다.");
         } catch (IllegalArgumentException e) {
-            logger.info("JWT 토큰이 잘못되었습니다.", e);
+            logger.warn("JWT 토큰이 잘못되었습니다.", e);
+            throw new TokenInvalidException("잘못된 토큰입니다.");
         }
-        return false;
     }
 
     public String getMemberNameFromToken(String token) {

@@ -58,7 +58,7 @@ public class AuthController {
             accessToken = accessToken.substring(7);
         }
         authService.logout(accessToken);
-        // 로그아웃 이름 반환 필요시 이름 받아오자
+
         return ResponseEntity.ok(ApiResponse.success("로그아웃 성공", null));
     }
 }

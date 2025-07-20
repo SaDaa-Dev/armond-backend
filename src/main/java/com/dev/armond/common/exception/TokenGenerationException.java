@@ -14,4 +14,4 @@ public class TokenGenerationException extends AuthenticationException {
     public TokenGenerationException(String customMessage, Throwable cause) {
         super(ErrorCode.AUTH_TOKEN_GENERATION_FAILED, customMessage, cause);
     }
-} 
+}

@@ -38,6 +38,14 @@ public class AuthService {
         try {
             log.info("Login attempt for member: {}", loginRequestDto.getMemberName());
             
+            // 1. 먼저 사용자 존재 여부 확인
+            Member member = memberRepository.findMemberByPhoneNumber(loginRequestDto.getMemberName())
+                    .orElseThrow(() -> {
+                        log.warn("User not found: {}", loginRequestDto.getMemberName());
+                        return new UserNotFoundException("사용자를 찾을 수 없습니다.");
+                    });
+            
+            // 2. 사용자가 존재하면 비밀번호 검증
             UsernamePasswordAuthenticationToken authenticationToken
                     = new UsernamePasswordAuthenticationToken(loginRequestDto.getMemberName(), loginRequestDto.getPassword());
 
@@ -45,8 +53,8 @@ public class AuthService {
             try {
                 authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
             } catch (BadCredentialsException e) {
-                log.warn("Invalid credentials for member: {}", loginRequestDto.getMemberName());
-                throw new InvalidCredentialsException("아이디 또는 비밀번호가 올바르지 않습니다.");
+                log.warn("Invalid password for member: {}", loginRequestDto.getMemberName());
+                throw new InvalidCredentialsException("비밀번호가 올바르지 않습니다.");
             } catch (AuthenticationException e) {
                 log.error("Authentication failed for member: {}", loginRequestDto.getMemberName(), e);
                 throw new InvalidCredentialsException("인증에 실패했습니다.");
@@ -74,12 +82,6 @@ public class AuthService {
                 log.error("Refresh token save failed for member: {}", loginRequestDto.getMemberName(), e);
                 throw new TokenGenerationException("리프레시 토큰 저장에 실패했습니다.");
             }
-
-            Member member = memberRepository.findMemberByPhoneNumber(authentication.getName())
-                    .orElseThrow(() -> {
-                        log.error("Member not found after authentication: {}", authentication.getName());
-                        return new UserNotFoundException("인증 후 사용자 정보를 찾을 수 없습니다.");
-                    });
 
             log.info("Login successful for member: {}", loginRequestDto.getMemberName());
             return TokenDto.builder()

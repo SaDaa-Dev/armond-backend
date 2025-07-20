@@ -23,7 +23,10 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final static String[] WHITELIST = {
-            "/**"
+            "/auth/**",           // 인증 관련 API
+            "/swagger-ui/**",     // Swagger UI
+            "/v3/api-docs/**"     // API 문서
+            // 다른 공개 API들...
     };
 
     @Bean

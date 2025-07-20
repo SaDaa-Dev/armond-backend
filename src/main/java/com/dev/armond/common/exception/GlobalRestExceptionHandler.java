@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.dev.armond.common.exception.TokenExpiredException;
+import com.dev.armond.common.exception.TokenInvalidException;
 
 @RestControllerAdvice
 @Slf4j
@@ -78,5 +80,21 @@ public class GlobalRestExceptionHandler {
         ErrorCode errorCode = ErrorCode.SYSTEM_INTERNAL_ERROR;
         return ResponseEntity.status(HttpStatus.valueOf(errorCode.getHttpStatus()))
                 .body(ApiResponse.error("서버 오류", "예기치 못한 오류가 발생했습니다.", errorCode.getCode()));
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTokenExpiredException(TokenExpiredException e) {
+        log.warn("Token expired: {}", e.getMessage());
+        ErrorCode errorCode = e.getErrorCode();
+        return ResponseEntity.status(HttpStatus.valueOf(errorCode.getHttpStatus()))
+                .body(ApiResponse.fail("토큰 만료", e.getMessage(), errorCode.getCode()));
+    }
+
+    @ExceptionHandler(TokenInvalidException.class)
+    public ResponseEntity<ApiResponse<Object>> handleTokenInvalidException(TokenInvalidException e) {
+        log.warn("Invalid token: {}", e.getMessage());
+        ErrorCode errorCode = e.getErrorCode();
+        return ResponseEntity.status(HttpStatus.valueOf(errorCode.getHttpStatus()))
+                .body(ApiResponse.fail("유효하지 않은 토큰", e.getMessage(), errorCode.getCode()));
     }
 }
